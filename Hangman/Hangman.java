@@ -14,12 +14,19 @@ import java.awt.*;
 public class Hangman extends ConsoleProgram {
 	
 	private HangmanLexicon hangmanWords = new HangmanLexicon();
+	private HangmanCanvas canvas = new HangmanCanvas();
 	private RandomGenerator rgen = new RandomGenerator();
 	private int trialCounter = 8;
 	
 	private String word = pickWord();
 	private String hiddenWord = showProgress();
+	private String incorrectLetters = "";
 	private char ch; 
+	
+	public void init() {
+		canvas = new HangmanCanvas();
+		add(canvas);
+	}
 	
     public void run() {
 		setup();
@@ -41,6 +48,7 @@ public class Hangman extends ConsoleProgram {
     }
     
     private void setup(){
+    	canvas.reset();
     	println("Welcome to Hangman!");
     	println("The word now looks like this: " + hiddenWord);
     	println("You have " + trialCounter + " guesses");
@@ -50,6 +58,8 @@ public class Hangman extends ConsoleProgram {
     	if(word.indexOf(ch) == -1) {
     		println("There are no " + ch + "'s in the word...");
     		trialCounter--;
+    		incorrectLetters = incorrectLetters + ch;
+    		canvas.noteIncorrectGuess(incorrectLetters);
     	}
     	else if(word.indexOf(ch) != -1) {
     		println("Your guess is correct!");
@@ -62,6 +72,7 @@ public class Hangman extends ConsoleProgram {
     			else if(i>0){
     				hiddenWord = hiddenWord.substring(0, i) + ch + hiddenWord.substring(i+1);
     			}
+    			canvas.displayWord(hiddenWord);
     		}
     	}
     }
